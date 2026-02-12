@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Copy, Check, Sparkles, Share2, ExternalLink } from 'lucide-react';
-import { supabase } from '../utils/supabaseClient';
+import { supabase, supabaseConfigError } from '../utils/supabaseClient';
 
 const CreateView: React.FC = () => {
   const [sender, setSender] = useState('');
@@ -16,6 +16,11 @@ const CreateView: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!sender || !recipient || !message) return;
+
+    if (!supabase) {
+      setSubmitError(supabaseConfigError ?? 'Supabase is not configured');
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitError(null);

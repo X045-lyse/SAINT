@@ -5,7 +5,7 @@ import CreateView from './views/CreateView';
 import ReceiveView from './views/ReceiveView';
 import FloatingHearts from './components/FloatingHearts';
 import { LoveLetterData } from './types';
-import { supabase } from './utils/supabaseClient';
+import { supabase, supabaseConfigError } from './utils/supabaseClient';
 
 const App: React.FC = () => {
   const [data, setData] = useState<LoveLetterData | null>(null);
@@ -14,6 +14,13 @@ const App: React.FC = () => {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchLetterById = async (id: string) => {
+    if (!supabase) {
+      setLoadError(supabaseConfigError ?? 'Supabase is not configured');
+      setData(null);
+      setView('CREATE');
+      return;
+    }
+
     setIsLoading(true);
     setLoadError(null);
     try {
